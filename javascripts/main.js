@@ -118,7 +118,7 @@ function timeoutCallback() {
 }
 
 function init2() {
-	document.getElementById("btnInit").addEventListener("click", btnInitializeClick, true);
+	document.getElementById("btn").addEventListener("click", btnInitializeClick, true);
 
 	window.addEventListener("deviceorientation", function(event) {
 		var alpha = event.alpha;
