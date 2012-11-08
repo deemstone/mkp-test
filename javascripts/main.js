@@ -12,8 +12,8 @@ var Orientation = function() {
 	this.positionValue = [0, 0, 0];
 	this.lowFilterAlpha = 0.8;
 	this._data = {
-		"direction": "",
-		"strength": 0
+		x: 0,
+		y: 0
 	};
 
 	this.initOrientation = function() {
@@ -82,23 +82,8 @@ var Orientation = function() {
 		var ex = this.positionValue[0];
 		var ey = this.positionValue[1];
 
-		var theta = Math.atan(ey / ex) * 180 / Math.PI;
-
-		if (Math.abs(theta) >= 60) {
-			if (ey > 0) {
-				this._data.direction = "front";
-			} else {
-				this._data.direction = "back";
-			}
-			this._data.strength = Math.round(Math.abs(ey));
-		} else if (Math.abs(theta) <= 30) {
-			if (ex > 0) {
-				this._data.direction = "right";
-			} else {
-				this._data.direction = "left";
-			}
-			this._data.strength = Math.round(Math.abs(ex));
-		}
+		this._data.x = ex;
+		this._data.y = ey;
 		return this._data;
 	}
 }
@@ -121,11 +106,14 @@ function timeoutCallback() {
 		left: '#CCFF00'
 	};
 	var body = document.body;
+	/**
 	var color = colors[data.direction];
 	var opacity = Math.floor(data.strength / 10) / 10;
 	document.getElementById('moAccel').innerHTML = data.direction + opacity;
 	body.style.background = color;
 	body.style.opacity = opacity;
+	/**/
+	body.innerHTML = data.x+":"+data.y;
 	setTimeout(timeoutCallback, 100);
 }
 
@@ -153,4 +141,3 @@ function deviceMotionHandler3(eventData) {
 	//	var rotation = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB) + "deg)";
 	//	document.getElementById("imgLogo").style.webkitTransform = rotation
 }
-
