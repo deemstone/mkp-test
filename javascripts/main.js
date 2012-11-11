@@ -1,5 +1,5 @@
 function init() {
-  if (window.DeviceMotionEvent) {
+	if (window.DeviceMotionEvent) {
 		console.log("DeviceMotionEvent supported");
 	} else if ('listenForDeviceMovement' in window) {
 		console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
@@ -97,6 +97,21 @@ function btnInitializeClick() {
 	setTimeout(timeoutCallback, 100);
 }
 
+/**
+ * 计算角度
+ */
+var getAngle = function(x1, y1, x2, y2) {
+	var x2 = x2 || 0;
+	var y2 = y2 || 0;
+	var x = Math.abs(x1 - x2);
+	var y = Math.abs(y1 - y2);
+	var z = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+	var cos = y / z;
+	var radina = Math.acos(cos);
+	var angle = 180 / (Math.PI / radina);
+	return angle;
+}
+
 function timeoutCallback() {
 	var data = ori.calculate();
 	var colors = {
@@ -113,7 +128,10 @@ function timeoutCallback() {
 	body.style.background = color;
 	body.style.opacity = opacity;
 	/**/
-	body.innerHTML = data.x+":"+data.y;
+	var x = data.x;
+	var y = data.y;
+
+	//body.innerHTML = data.x + ":" + data.y;
 	setTimeout(timeoutCallback, 100);
 }
 
@@ -141,3 +159,4 @@ function deviceMotionHandler3(eventData) {
 	//	var rotation = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB) + "deg)";
 	//	document.getElementById("imgLogo").style.webkitTransform = rotation
 }
+
