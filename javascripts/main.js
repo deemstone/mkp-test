@@ -94,7 +94,7 @@ init2();
 
 function btnInitializeClick() {
 	ori.initOrientation();
-	document.body..webkitRequestFullScreen();
+	document.body.webkitRequestFullScreen();
 	setTimeout(timeoutCallback, 100);
 }
 
@@ -249,7 +249,9 @@ var changeColor=function(vx,vy){
 	var body = document.body;
 	body.style.background=color;
 	body.style.opacity=opacity;
-	document.getElementById('btn').innerHTML=["<h1>",opacity,"</h1>","<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
+	if(location.hash == "#debug"){
+		document.getElementById('btn').innerHTML=["<h1>",opacity,"</h1>","<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
+	}
 }
 
 
