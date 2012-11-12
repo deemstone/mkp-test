@@ -117,7 +117,7 @@ var getAngle = function(x1, y1, x2, y2) {
 	var cos = y / z;
 	var radina = Math.acos(cos);
 	var angle = 0;
-	var quadrant = 0; //象限
+	var quadrant = 0; //象限 其实象限在这个地方没用
 	if (y == 0 || x == 0) {
 		if(x>=0){
 			if(y>=0){
