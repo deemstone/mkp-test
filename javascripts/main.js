@@ -94,7 +94,7 @@ init2();
 
 function btnInitializeClick() {
 	ori.initOrientation();
-	document.body.webkitRequestFullScreen();
+	//document.body.webkitRequestFullScreen(); 可惜chrome移动版暂时不支持全屏
 	setTimeout(timeoutCallback, 100);
 }
 
