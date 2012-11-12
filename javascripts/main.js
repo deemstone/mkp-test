@@ -242,8 +242,11 @@ var changeColor=function(vx,vy){
 
 	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
+	var power=parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)))/100;
+	var opacity=power/
 	var body = document.body;
 	body.style.background=color;
+	body.style.opacity=opacity;
 	document.getElementById('btn').innerHTML=["<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
 }
 
