@@ -242,8 +242,9 @@ var changeColor=function(vx,vy){
 
 	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
-	var power=parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)))/100;
-	var opacity=power/100;
+	var power=parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+	var opacity=(power/100).toFixed(2);// 这样直接取值效果非常不好
+	//var opacity=(power == 0?0:Math.atan(100/power)*Math.PI/180)/90;
 	var body = document.body;
 	body.style.background=color;
 	body.style.opacity=opacity;
