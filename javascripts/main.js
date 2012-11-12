@@ -161,12 +161,12 @@ var getAngle = function(x1, y1, x2, y2) {
  * 这个地方是最痛苦的地方
  */
 var getColor = function(angle, quadrant) {
-	var color = "#ffffff";
+	var color = "ffffff";
 	var colors = {
-		front: '#ffff00',
-		back: '#0000ff',
-		left: '#ff000',
-		right: '#00ff00'
+		front: 'ffff00',
+		back: '0000ff',
+		left: 'ff000',
+		right: '00ff00'
 	}
 	if (!quadrant) {
 		quadrant = 0;
@@ -225,29 +225,23 @@ var getColor = function(angle, quadrant) {
 	return "#"+color;
 }
 
-function timeoutCallback() {
+/**
+ * 改变屏幕颜色
+ */
+var changeColor=function(vx,vy){
 	var data = ori.calculate();
-	var colors = {
-		front: '#ff3399',
-		back: '#426ab3',
-		right: '#006c54',
-		left: '#CCFF00'
-	};
-	var body = document.body;
-	/**
-	var color = colors[data.direction];
-	var opacity = Math.floor(data.strength / 10) / 10;
-	document.getElementById('moAccel').innerHTML = data.direction + opacity;
-	body.style.background = color;
-	body.style.opacity = opacity;
-	/**/
-	var x = parseInt(data.x);
-	var y = parseInt(data.y);
+	var x = vx||parseInt(data.x);
+	var y = vy||parseInt(data.y);
 
 	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
+	var body = document.body;
 	body.style.background=color;
-	document.getElementById('btn').innerHTML="<h1>"+x+":"+y+"</h1><h1>"+angle+":"+color+"</h1>"
+	document.getElementById('btn').innerHTML="<h1>"+x+":"+y+"</h1><h1>"+angle+":"+color+"</h1>";
+}
+
+function timeoutCallback() {
+	changeColor();
 	setTimeout(timeoutCallback, 100);
 }
 
@@ -269,10 +263,5 @@ function deviceMotionHandler3(eventData) {
 	if (acceleration.z > 0) {
 		facingUp = + 1;
 	}
-	//	var tiltLR = Math.round(((acceleration.x) / 9.81) * - 90);
-	//	var tiltFB = Math.round(((acceleration.y + 9.81) / 9.81) * 90 * facingUp);
-	document.getElementById("moAccel").innerHTML = rawAcceleration;
-	//	var rotation = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB) + "deg)";
-	//	document.getElementById("imgLogo").style.webkitTransform = rotation
 }
 
