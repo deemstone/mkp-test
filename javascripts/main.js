@@ -237,7 +237,7 @@ var changeColor=function(vx,vy){
 	var color=getColor(angle);
 	var body = document.body;
 	body.style.background=color;
-	document.getElementById('btn').innerHTML="<h1>"+x+":"+y+"</h1><h1>"+angle+":"+color+"</h1>";
+	document.getElementById('btn').innerHTML=["<h1>",x.toSting(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join();
 }
 
 function timeoutCallback() {
