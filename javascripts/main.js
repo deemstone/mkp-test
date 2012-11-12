@@ -218,7 +218,7 @@ var getColor = function(angle, quadrant) {
 		if (angle - 270 <= 45) {
 			color = "00" + parseInt((angle - 270) / 45 * 255).toString(16) + "ff";
 		} else {
-			color = "00ff" + (255 - parseInt(angle - 315) / 45 * 255).toString;
+			color = "00ff" + (255 - parseInt(angle - 315) / 45 * 255).toString(16);
 		}
 		break;
 	}
