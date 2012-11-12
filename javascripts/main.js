@@ -111,10 +111,20 @@ var getAngle = function(x1, y1, x2, y2) {
 	var angle = 0;
 	var quadrant = 0; //象限
 	if (y == 0 || x == 0) {
-		console.log(2);
-
+		if(x>=0){
+			if(y>=0){
+				angle=0;
+			}else{
+				angle=180;
+			}
+		}else if(y>=0){
+			if(x>=0){
+				angle=90;
+			}else{
+				angle=270;
+			}
+		}
 	} else {
-		console.log(3);
 		var flag = (y > 0 ? "+": "-") + (x > 0 ? "+": '-');
 		console.log(flag);
 
@@ -159,7 +169,10 @@ var getColor = function(angle, quadrant) {
 		right: '#00ff00'
 	}
 	if (!quadrant) {
-		quadrant = 1;
+		quadrant = 0;
+		if(angle>0){
+			quadrant=1;
+		}
 		if (angle > 90) {
 			quadrant = 2
 		}
@@ -171,6 +184,22 @@ var getColor = function(angle, quadrant) {
 		}
 	}
 	switch (quadrant) {
+	case 0:
+		switch (angle){
+			case 0:
+				color="00ff00";
+				break;
+			case 90:
+				color="ffff00";
+				break;
+			case 180:
+				color="ff0000";
+				break;
+			case 270:
+				color="0000ff";
+				break;
+		}
+		break;
 	case 1:
 		color = parseInt(angle / 90 * 255).toString(16) + "ff00";
 		break;
