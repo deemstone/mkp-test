@@ -134,7 +134,6 @@ var getAngle = function(x1, y1, x2, y2) {
 		}
 	} else {
 		var flag = (y > 0 ? "+": "-") + (x > 0 ? "+": '-');
-		console.log(flag);
 
 		switch (flag) {
 		case "++":
@@ -147,7 +146,7 @@ var getAngle = function(x1, y1, x2, y2) {
 			break;
 		case "--":
 			quadrant = 3;
-			angle = 360 / (Math.PI / radina);
+			angle = 360-180 / (Math.PI / radina);
 			break;
 		case "+-":
 			quadrant = 4;
