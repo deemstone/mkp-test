@@ -241,13 +241,13 @@ function timeoutCallback() {
 	body.style.background = color;
 	body.style.opacity = opacity;
 	/**/
-	var x = data.x;
-	var y = data.y;
+	var x = parseInt(data.x);
+	var y = parseInt(data.y);
 
-	var angle=getAngle(data.x,data.y).angle;
+	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
 	body.style.background=color;
-	document.getElementById('btn').innerHTML="<h1>"+data.x+":"+data.y+"</h1><h1>"+angle+":"+color+"</h1>"
+	document.getElementById('btn').innerHTML="<h1>"+x+":"+y+"</h1><h1>"+angle+":"+color+"</h1>"
 	setTimeout(timeoutCallback, 100);
 }
 
