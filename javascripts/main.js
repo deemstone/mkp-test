@@ -103,13 +103,97 @@ function btnInitializeClick() {
 var getAngle = function(x1, y1, x2, y2) {
 	var x2 = x2 || 0;
 	var y2 = y2 || 0;
-	var x = Math.abs(x1 - x2);
-	var y = Math.abs(y1 - y2);
+	var y = x1 - x2;
+	var x = y1 - y2;
 	var z = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 	var cos = y / z;
 	var radina = Math.acos(cos);
-	var angle = 180 / (Math.PI / radina);
-	return angle;
+	var angle = 0;
+	var quadrant = 0; //象限
+	if (y == 0 || x == 0) {
+		console.log(2);
+
+	} else {
+		console.log(3);
+		var flag = (y > 0 ? "+": "-") + (x > 0 ? "+": '-');
+		console.log(flag);
+
+		switch (flag) {
+		case "++":
+			quadrant = 1;
+			angle = 180 / (Math.PI / radina);
+			break;
+		case "-+":
+			quadrant = 2;
+			angle = 180 / (Math.PI / radina);
+			break;
+		case "--":
+			quadrant = 3;
+			angle = 360 / (Math.PI / radina);
+			break;
+		case "+-":
+			quadrant = 4;
+			angle = 360 - 180 / (Math.PI / radina);
+			break;
+		default:
+			quadrant = 0;
+			angle = 0;
+		}
+	}
+	return {
+		quadrant: quadrant,
+		angle: parseInt(angle)
+	};
+}
+
+/**
+ * 获取颜色
+ * 这个地方是最痛苦的地方
+ */
+var getColor = function(angle, quadrant) {
+	var color = "#ffffff";
+	var colors = {
+		front: '#ffff00',
+		back: '#0000ff',
+		left: '#ff000',
+		right: '#00ff00'
+	}
+	if (!quadrant) {
+		quadrant = 1;
+		if (angle > 90) {
+			quadrant = 2
+		}
+		if (angle > 180) {
+			quadrant = 3
+		}
+		if (angle > 270) {
+			quadrant = 4
+		}
+	}
+	switch (quadrant) {
+	case 1:
+		color = parseInt(angle / 90 * 255).toString(16) + "ff00";
+		break;
+	case 2:
+		color = "ff" + (255 - parseInt((angle - 90) / 90 * 255)).toString(16) + "00";
+		break;
+	case 3:
+		if (angle - 180 <= 45) {
+			color = "ff00" + parseInt((angle - 180) / 45 * 255).toString(16);
+		} else {
+			color = (255 - parseInt(angle - 225) / 45 * 255).toString(16) + "00ff"
+		}
+		break;
+
+	case 4:
+		if (angle - 270 <= 45) {
+			color = "00" + parseInt((angle - 270) / 45 * 255).toString(16) + "ff";
+		} else {
+			color = "00ff" + (255 - parseInt(angle - 315) / 45 * 255).toString;
+		}
+		break;
+	}
+	return "#"+color;
 }
 
 function timeoutCallback() {
@@ -131,7 +215,7 @@ function timeoutCallback() {
 	var x = data.x;
 	var y = data.y;
 
-	//body.innerHTML = data.x + ":" + data.y;
+	body.style.background=getColor(getAngle(data.x,data.y));
 	setTimeout(timeoutCallback, 100);
 }
 
