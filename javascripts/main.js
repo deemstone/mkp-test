@@ -215,7 +215,7 @@ function timeoutCallback() {
 	var x = data.x;
 	var y = data.y;
 
-	var angle=getAngle(data.x,data.y);
+	var angle=getAngle(data.x,data.y).angle;
 	var color=getColor(angle);
 	body.style.background=color;
 	document.getElementById('btn').innerHTML="<h1>"+angle+":"+color+"</h1>"
