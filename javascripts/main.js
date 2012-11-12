@@ -97,6 +97,14 @@ function btnInitializeClick() {
 	setTimeout(timeoutCallback, 100);
 }
 
+
+function timeoutCallback() {
+	changeColor();
+	setTimeout(timeoutCallback, 100);
+}
+
+
+
 /**
  * 计算角度
  */
@@ -230,20 +238,18 @@ var getColor = function(angle, quadrant) {
  */
 var changeColor=function(vx,vy){
 	var data = ori.calculate();
-	var x = vx||parseInt(data.x);
-	var y = vy||parseInt(data.y);
+	var x = typeof vx == "number"?vx:parseInt(data.x);
+	var y = typeof vy == "number"?vy:parseInt(data.y);
 
 	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
 	var body = document.body;
 	body.style.background=color;
-	document.getElementById('btn').innerHTML=["<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join();
+	document.getElementById('btn').innerHTML=["<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
 }
 
-function timeoutCallback() {
-	changeColor();
-	setTimeout(timeoutCallback, 100);
-}
+
+
 
 function init2() {
 	document.getElementById("btn").addEventListener("click", btnInitializeClick, true);
@@ -264,4 +270,7 @@ function deviceMotionHandler3(eventData) {
 		facingUp = + 1;
 	}
 }
+
+
+
 
