@@ -94,6 +94,7 @@ init2();
 
 function btnInitializeClick() {
 	ori.initOrientation();
+	document.body..webkitRequestFullScreen();
 	setTimeout(timeoutCallback, 100);
 }
 
