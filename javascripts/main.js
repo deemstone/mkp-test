@@ -258,7 +258,7 @@ var changeColor=function(vx,vy){
 	 * 下面是颜色也表示亮度
 	 */
 	var cat=color.charAt;
-	var RGB=[cat(1)+cat(2),cat(3)+cat(4),cat(5)+cat(6)];
+	var RGB=[cat(1)+""+cat(2),cat(3)+""+cat(4),cat(5)+""+cat(6)];
 	for(var i=0,l=3;i<l;i++){
 		var c=RGB[i]-(100-power)*2;
 		if(c<0){
