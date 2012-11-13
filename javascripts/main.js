@@ -120,7 +120,7 @@ var getAngle = function(x1, y1, x2, y2) {
 	var angle = 0;
 	var quadrant = 0; //象限 其实象限在这个地方没用
 	if (x*y==0) {
-		if(x=0){
+		if(x==0){
 			if(y>=0){
 				angle=0;
 			}else{
