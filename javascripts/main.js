@@ -251,14 +251,12 @@ var changeColor=function(vx,vy){
 	var angle=getAngle(x,y).angle;
 	var color=getColor(angle);
 	var power=parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-	//var opacity=(power == 0?0:Math.atan(100/power)*Math.PI/180)/90;
 	var body = document.body;
 	
 	/**
 	 * 下面是颜色也表示亮度
-	 */
-	var cat=color.charAt;
-	var RGB=[cat(1)+""+cat(2),cat(3)+""+cat(4),cat(5)+""+cat(6)];
+	 *
+	var RGB=[color.charAt(1)+""+color.charAt(2),color.charAt(3)+""+color.charAt(4),color.charAt(5)+""+color.charAt(6)];
 	for(var i=0,l=3;i<l;i++){
 		var c=RGB[i]-(100-power)*2;
 		if(c<0){
@@ -276,11 +274,11 @@ var changeColor=function(vx,vy){
 
 	 /**
 	 * 颜色的调节 
-	 *
+	 */
 	body.style.background=color;
 	/**
 	 * 亮度调节
-	 *
+	 */
 	var opacity=(power/100).toFixed(2);// 这样直接取值效果非常不好
 	body.style.opacity=opacity;
 	/**/
