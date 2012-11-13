@@ -255,17 +255,21 @@ var changeColor=function(vx,vy){
 	
 	/**
 	 * 下面是颜色也表示亮度
+	 * 第二种方式
 	 *
 	var RGB=[color.charAt(1)+""+color.charAt(2),color.charAt(3)+""+color.charAt(4),color.charAt(5)+""+color.charAt(6)];
 	for(var i=0,l=3;i<l;i++){
-		var c=RGB[i]-(100-power)*2;
-		if(c<0){
+		var c=parseInt(RGB[i],16)-parseInt((100-power)*55/100);
+		if(c<=0){
 			c="00";
+		}else{
+			c=parseInt(c).toString(16);
 		}
 		RGB[i]=c;
 	}
 	var color="#"+RGB.join("");
 	body.style.background=color;
+	/**/
 
 		/**
 		 * 之前的代码 颜色表示方位,透明度表示力度
@@ -283,7 +287,7 @@ var changeColor=function(vx,vy){
 	body.style.opacity=opacity;
 	/**/
 	if(location.hash == "#debug"){
-		document.getElementById('btn').innerHTML=["<h1>",opacity,"</h1>","<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
+		document.getElementById('btn').innerHTML=["<h1>",power,"</h1>","<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
 	}
 }
 
