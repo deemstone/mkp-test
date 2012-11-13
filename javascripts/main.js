@@ -1,3 +1,4 @@
+var INITED=false;
 function init() {
 	if (window.DeviceMotionEvent) {
 		console.log("DeviceMotionEvent supported");
@@ -94,12 +95,14 @@ init2();
 
 function btnInitializeClick() {
 	ori.initOrientation();
-	//document.body.webkitRequestFullScreen(); 可惜chrome移动版暂时不支持全屏
-	setTimeout(timeoutCallback, 100);
+	if(!INITED){
+		setTimeout(timeoutCallback, 100);
+	}
 }
 
 
 function timeoutCallback() {
+	INITED=true;
 	changeColor();
 	setTimeout(timeoutCallback, 100);
 }
