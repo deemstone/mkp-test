@@ -128,13 +128,10 @@ var getAngle = function(x1, y1, x2, y2) {
 			}
 		
 		}else{
-			alert(x)
 			if(x>0){
-				alert(1)
 				angle=90;
 			}else{
 				angle=270;
-				alert(2)
 			}
 		}
 	} else {
