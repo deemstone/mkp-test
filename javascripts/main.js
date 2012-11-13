@@ -190,6 +190,9 @@ var getColor = function(angle, quadrant) {
 		if (angle > 270) {
 			quadrant = 4
 		}
+		if(angle == 0 || angle == 90||angle==270){
+			quadrant=0;
+		}
 	}
 	switch (quadrant) {
 	case 0:
