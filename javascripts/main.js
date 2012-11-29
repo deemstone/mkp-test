@@ -1,20 +1,25 @@
-var INITED=false;
+var INITED = false;
 function init() {
 	if (window.DeviceMotionEvent) {
-		console.log("DeviceMotionEvent supported");
+		//console.log("DeviceMotionEvent supported");
 	} else if ('listenForDeviceMovement' in window) {
-		console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
+		//console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
 	}
 }
 
 var Orientation = function() {
 	this.initialOrientation = [0, 0, 0];
-	this.lastOrientationValue = [0, 0, 0];
+	this.lastOrientationValue = [90, 90, 90];
 	this.positionValue = [0, 0, 0];
 	this.lowFilterAlpha = 0.8;
 	this._data = {
-		x: 0,
-		y: 0
+		x: 100,
+		y: 100,
+		z: 100,
+		alpha: 90,
+		beta: 90,
+		gamma: 90,
+		horizontal: false
 	};
 
 	this.initOrientation = function() {
@@ -82,9 +87,19 @@ var Orientation = function() {
 
 		var ex = this.positionValue[0];
 		var ey = this.positionValue[1];
+		var ez = this.positionValue[2];
 
 		this._data.x = ex;
 		this._data.y = ey;
+		this._data.z = ez;
+		this._data.alpha = angleX * 180 / Math.PI;
+		this._data.beta = angleY * 180 / Math.PI;
+		this._data.gamma = angleZ * 180 / Math.PI;
+		if (Math.abs(this._data.alpha) <= 10 && Math.abs(this._data.beta) <= 10) {
+			this._data.horizontal = true;
+		} else {
+			this._data.horizontal = false;
+		}
 		return this._data;
 	};
 };
@@ -94,22 +109,17 @@ var ori = new Orientation();
 init2();
 
 function btnInitializeClick() {
-	document.body.webkitRequestFullScreen();
-	alert(document.body.webkitRequestFullScreen);
 	ori.initOrientation();
-	if(!INITED){
+	if (!INITED) {
 		setTimeout(timeoutCallback, 100);
 	}
 }
 
-
 function timeoutCallback() {
-	INITED=true;
+	INITED = true;
 	changeColor();
 	setTimeout(timeoutCallback, 100);
 }
-
-
 
 /**
  * 计算角度
@@ -124,19 +134,19 @@ var getAngle = function(x1, y1, x2, y2) {
 	var radina = Math.acos(cos);
 	var angle = 0;
 	var quadrant = 0; //象限 其实象限在这个地方没用
-	if (x*y===0) {
-		if(x===0){
-			if(y>=0){
-				angle=0;
-			}else{
-				angle=180;
+	if (x * y === 0) {
+		if (x === 0) {
+			if (y >= 0) {
+				angle = 0;
+			} else {
+				angle = 180;
 			}
-		
-		}else{
-			if(x>0){
-				angle=90;
-			}else{
-				angle=270;
+
+		} else {
+			if (x > 0) {
+				angle = 90;
+			} else {
+				angle = 270;
 			}
 		}
 	} else {
@@ -153,7 +163,7 @@ var getAngle = function(x1, y1, x2, y2) {
 			break;
 		case "--":
 			quadrant = 3;
-			angle = 360-180 / (Math.PI / radina);
+			angle = 360 - 180 / (Math.PI / radina);
 			break;
 		case "+-":
 			quadrant = 4;
@@ -185,8 +195,8 @@ var getColor = function(angle, quadrant) {
 	}
 	if (!quadrant) {
 		quadrant = 0;
-		if(angle>0){
-			quadrant=1;
+		if (angle > 0) {
+			quadrant = 1;
 		}
 		if (angle > 90) {
 			quadrant = 2
@@ -197,25 +207,25 @@ var getColor = function(angle, quadrant) {
 		if (angle > 270) {
 			quadrant = 4
 		}
-		if(angle == 0 || angle == 90||angle==270){
-			quadrant=0;
+		if (angle == 0 || angle == 90 || angle == 270) {
+			quadrant = 0;
 		}
 	}
 	switch (quadrant) {
 	case 0:
-		switch (angle){
-			case 0:
-				color="00ff00";
-				break;
-			case 90:
-				color="ffff00";
-				break;
-			case 180:
-				color="ff0000";
-				break;
-			case 270:
-				color="0000ff";
-				break;
+		switch (angle) {
+		case 0:
+			color = "00ff00";
+			break;
+		case 90:
+			color = "ffff00";
+			break;
+		case 180:
+			color = "ff0000";
+			break;
+		case 270:
+			color = "0000ff";
+			break;
 		}
 		break;
 	case 1:
@@ -240,22 +250,22 @@ var getColor = function(angle, quadrant) {
 		}
 		break;
 	}
-	return "#"+color;
+	return "#" + color;
 }
 
 /**
  * 改变屏幕颜色
  */
-var changeColor=function(vx,vy){
+var changeColor = function(vx, vy) {
 	var data = ori.calculate();
-	var x = typeof vx == "number"?vx:parseInt(data.x);
-	var y = typeof vy == "number"?vy:parseInt(data.y);
+	var x = typeof vx == "number" ? vx: parseInt(data.x);
+	var y = typeof vy == "number" ? vy: parseInt(data.y);
 
-	var angle=getAngle(x,y).angle;
-	var color=getColor(angle);
-	var power=parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+	var angle = getAngle(x, y).angle;
+	var color = getColor(angle);
+	var power = parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
 	var body = document.body;
-	
+
 	/**
 	 * 下面是颜色也表示亮度
 	 * 第二种方式
@@ -274,28 +284,25 @@ var changeColor=function(vx,vy){
 	body.style.background=color;
 	/**/
 
-		/**
-		 * 之前的代码 颜色表示方位,透明度表示力度
-		 * 但是颜色和亮度配合起来有问题
-		 */
+	/**
+	 * 之前的代码 颜色表示方位,透明度表示力度
+	 * 但是颜色和亮度配合起来有问题
+	 */
 
-	 /**
+	/**
 	 * 颜色的调节 
 	 */
-	body.style.background=color;
+	body.style.background = color;
 	/**
 	 * 亮度调节
 	 */
-	var opacity=(power/100).toFixed(2);// 这样直接取值效果非常不好
-	body.style.opacity=opacity;
+	var opacity = (power / 100).toFixed(2); // 这样直接取值效果非常不好
+	body.style.opacity = opacity;
 	/**/
-	if(location.hash == "#debug"){
-		document.getElementById('btn').innerHTML=["<h1>",power,"</h1>","<h1>",x.toString(),":",y.toString(),"</h1><h1>",angle,":",color,"</h1>"].join("");
+	if (location.hash == "#debug") {
+		document.getElementById('btn').innerHTML = ["<h1>", power, "</h1>", "<h1>", x.toString(), ":", y.toString(), "</h1><h1>", angle, ":", color, "</h1>"].join("");
 	}
 }
-
-
-
 
 function init2() {
 	document.getElementById("btn").addEventListener("click", btnInitializeClick, true);
@@ -317,6 +324,52 @@ function deviceMotionHandler3(eventData) {
 	}
 }
 
+/**
+ * 检测是否在水平状态
+ */
+var ball=document.getElementById("ball");
+var checkHo=function(){
+	var data=ori.calculate();
+	var alpha=data.alpha;
+	var beta=data.beta;
+	if(window.orientation !== 0){
+		alpha=data.beta;
+		beta=data.alpha;
+	}
+	
+	var horizontal=data.horizontal;
+	console.log(JSON.stringify(data));
+	var update=(new Date()).getTime();
+	if(horizontal){
+		// 已经是水平
+		changeBall({top:45,left:45});
+		setTimeout(checkHo,100);
+		
+		setTimeout(function(){
+			var html=document.documentElement;
+			html.style.background='none';
+			document.getElementById('ball').style.display='none';
+			document.getElementById("btn").style.display='block';
+			document.getElementById("btn").style.background='url(images/chrome.png) no-repeat center center';
+		},600);
+		/**/
+	}else{
+		var px=alpha>0?parseInt(45-alpha/90*45):parseInt(-alpha/90*45+45);
+		var py=beta>0?parseInt(45-beta/90*45):parseInt(-beta/90*45+45);
+		changeBall({top:px,left:py});
+		setTimeout(checkHo,100);
+		
+	}
+};
 
-
-
+/**
+ * 改变小球位置
+ */
+var changeBall=function(pos){
+	ball.style.left=pos.left+"%";
+	ball.style.top=pos.top+'%';
+	if (location.hash == "#debug") {
+		document.getElementById('ball').innerHTML = [pos.px,pos.py].join("");
+	}
+};
+checkHo();
