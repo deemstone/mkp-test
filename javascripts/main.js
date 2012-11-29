@@ -22,7 +22,7 @@ var Orientation = function() {
 		this.initialOrientation[1] = this.lastOrientationValue[1];
 		this.initialOrientation[2] = this.lastOrientationValue[2];
 		return this;
-	}
+	};
 
 	this.setOrientation = function(alpha, beta, gamma) {
 		if (alpha > 180) {
@@ -35,7 +35,7 @@ var Orientation = function() {
 		this.lastOrientationValue[1] = beta * Math.PI / 180;
 		this.lastOrientationValue[2] = gamma * Math.PI / 180;
 		return this;
-	}
+	};
 
 	this.calculate = function() {
 		var angleX = this.lastOrientationValue[1];
@@ -86,14 +86,16 @@ var Orientation = function() {
 		this._data.x = ex;
 		this._data.y = ey;
 		return this._data;
-	}
-}
+	};
+};
 
 var ori = new Orientation();
 
 init2();
 
 function btnInitializeClick() {
+	document.body.webkitRequestFullScreen();
+	alert(document.body.webkitRequestFullScreen);
 	ori.initOrientation();
 	if(!INITED){
 		setTimeout(timeoutCallback, 100);
@@ -122,8 +124,8 @@ var getAngle = function(x1, y1, x2, y2) {
 	var radina = Math.acos(cos);
 	var angle = 0;
 	var quadrant = 0; //象限 其实象限在这个地方没用
-	if (x*y==0) {
-		if(x==0){
+	if (x*y===0) {
+		if(x===0){
 			if(y>=0){
 				angle=0;
 			}else{
@@ -160,13 +162,14 @@ var getAngle = function(x1, y1, x2, y2) {
 		default:
 			quadrant = 0;
 			angle = 0;
+			break;
 		}
 	}
 	return {
 		quadrant: quadrant,
 		angle: parseInt(angle)
 	};
-}
+};
 
 /**
  * 获取颜色
