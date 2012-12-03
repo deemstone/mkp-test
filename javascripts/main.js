@@ -1,5 +1,5 @@
 var INITED = false;
-var html=null;
+var html = null;
 function init() {
 	if (window.DeviceMotionEvent) {
 		//console.log("DeviceMotionEvent supported");
@@ -117,9 +117,9 @@ function btnInitializeClick() {
 	/**
 	 * 这2行是为了在点击之后才不显示
 	 */
-	document.getElementById('ball').style.display='none';
-	document.getElementById('tips').style.display='none';
-	html.style.background='none';
+	document.getElementById('ball').style.display = 'none';
+	document.getElementById('tips').style.display = 'none';
+	html.style.background = 'none';
 	clearTimeout(checkHoTimer);
 }
 
@@ -234,6 +234,8 @@ var getColor = function(angle, quadrant) {
 		case 270:
 			color = "0000ff";
 			break;
+		default:
+			break;
 		}
 		break;
 	case 1:
@@ -256,6 +258,8 @@ var getColor = function(angle, quadrant) {
 		} else {
 			color = "00ff" + (255 - parseInt((angle - 315) / 45 * 255)).toString(16);
 		}
+		break;
+	default:
 		break;
 	}
 	return "#" + color;
@@ -335,54 +339,67 @@ function deviceMotionHandler3(eventData) {
 /**
  * 检测是否在水平状态
  */
-var ball=document.getElementById("ball");
-var checkHo=function(){
-	var data=ori.calculate();
-	var alpha=data.alpha;
-	var beta=data.beta;
-	if(window.orientation !== 0){
-		alpha=data.beta;
-		beta=data.alpha;
+var ball = document.getElementById("ball");
+var hoCount = 0;
+var checkHo = function() {
+	var data = ori.calculate();
+	var alpha = data.alpha;
+	var beta = data.beta;
+	if (window.orientation !== 0) {
+		alpha = data.beta;
+		beta = data.alpha;
 	}
-	
-	var horizontal=data.horizontal;
+
+	var horizontal = data.horizontal;
 	console.log(JSON.stringify(data));
-	var update=(new Date()).getTime();
-	if(horizontal){
+	if (horizontal) {
 		// 已经是水平
-		changeBall({top:45,left:45});
-		window.checkHoTimer=setTimeout(checkHo,100);
-		
-		setTimeout(function(){
-			html=document.documentElement;
-			document.getElementById("ball").style.display='none';
-			document.getElementById("btn").style.display='block';
-			document.getElementById("btn").style.background='url(images/chrome.png) no-repeat center center';
-			document.getElementById("tips").innerHTML="Step 2: 点击chrome图标";
-		},600);
-		/**/
-	}else{
-		var px=alpha>0?parseInt(45-alpha/90*45):parseInt(-alpha/90*45+45);
-		var py=beta>0?parseInt(45-beta/90*45):parseInt(-beta/90*45+45);
-		changeBall({top:px,left:py});
-		document.getElementById("btn").style.display='none';
-		document.getElementById("ball").style.display='block';
-		document.getElementById("tips").innerHTML="Step 1: 手机水平向前放置";
-		setTimeout(checkHo,100);
-		
+		if (hoCount < 6) {
+			hoCount++;
+			setTimeout(checkHo, 100);
+		} else {
+			changeBall({
+				top: 45,
+				left: 45
+			});
+			window.checkHoTimer = setTimeout(checkHo, 100);
+
+			setTimeout(function() {
+				html = document.documentElement;
+				document.getElementById("ball").style.display = 'none';
+				document.getElementById("btn").style.display = 'block';
+				document.getElementById("btn").style.background = 'url(images/chrome.png) no-repeat center center';
+				document.getElementById("tips").innerHTML = "Step 2: 点击chrome图标";
+			},
+			600);
+		}
+	} else {
+		hoCount=0;
+		var px = alpha > 0 ? parseInt(45 - alpha / 90 * 45) : parseInt( - alpha / 90 * 45 + 45);
+		var py = beta > 0 ? parseInt(45 - beta / 90 * 45) : parseInt( - beta / 90 * 45 + 45);
+		changeBall({
+			top: px,
+			left: py
+		});
+		document.getElementById("btn").style.display = 'none';
+		document.getElementById("ball").style.display = 'block';
+		document.getElementById("tips").innerHTML = "Step 1: 手机水平向前放置";
+		setTimeout(checkHo, 100);
+
 	}
 };
 
 /**
  * 改变小球位置
  */
-var changeBall=function(pos){
-	ball.style.left=pos.left+"%";
-	ball.style.top=pos.top+'%';
+var changeBall = function(pos) {
+	ball.style.left = pos.left + "%";
+	ball.style.top = pos.top + '%';
 	if (location.hash == "#debug") {
-		document.getElementById('ball').innerHTML = [pos.px,pos.py].join("");
+		document.getElementById('ball').innerHTML = [pos.px, pos.py].join("");
 	}
 };
-window.onload=function(){
-checkHo();
+window.onload = function() {
+	checkHo();
 }
+
