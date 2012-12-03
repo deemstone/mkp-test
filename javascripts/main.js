@@ -1,4 +1,5 @@
 var INITED = false;
+var html=null;
 function init() {
 	if (window.DeviceMotionEvent) {
 		//console.log("DeviceMotionEvent supported");
@@ -113,6 +114,13 @@ function btnInitializeClick() {
 	if (!INITED) {
 		setTimeout(timeoutCallback, 100);
 	}
+	/**
+	 * 这2行是为了在点击之后才不显示
+	 */
+	document.getElementById('ball').style.display='none';
+	document.getElementById('tips').style.display='none';
+	html.style.background='none';
+	clearTimeout(checkHoTimer);
 }
 
 function timeoutCallback() {
@@ -207,7 +215,7 @@ var getColor = function(angle, quadrant) {
 		if (angle > 270) {
 			quadrant = 4
 		}
-		if (angle == 0 || angle == 90 || angle == 270) {
+		if (angle === 0 || angle === 90 || angle === 270) {
 			quadrant = 0;
 		}
 	}
@@ -343,20 +351,23 @@ var checkHo=function(){
 	if(horizontal){
 		// 已经是水平
 		changeBall({top:45,left:45});
-		setTimeout(checkHo,100);
+		window.checkHoTimer=setTimeout(checkHo,100);
 		
 		setTimeout(function(){
-			var html=document.documentElement;
-			html.style.background='none';
-			document.getElementById('ball').style.display='none';
+			html=document.documentElement;
+			document.getElementById("ball").style.display='none';
 			document.getElementById("btn").style.display='block';
 			document.getElementById("btn").style.background='url(images/chrome.png) no-repeat center center';
+			document.getElementById("tips").innerHTML="Step 2: 点击chrome图标";
 		},600);
 		/**/
 	}else{
 		var px=alpha>0?parseInt(45-alpha/90*45):parseInt(-alpha/90*45+45);
 		var py=beta>0?parseInt(45-beta/90*45):parseInt(-beta/90*45+45);
 		changeBall({top:px,left:py});
+		document.getElementById("btn").style.display='none';
+		document.getElementById("ball").style.display='block';
+		document.getElementById("tips").innerHTML="Step 1: 手机水平向前放置";
 		setTimeout(checkHo,100);
 		
 	}
@@ -372,4 +383,6 @@ var changeBall=function(pos){
 		document.getElementById('ball').innerHTML = [pos.px,pos.py].join("");
 	}
 };
+window.onload=function(){
 checkHo();
+}
