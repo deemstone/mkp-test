@@ -1,14 +1,9 @@
-var INITED = false;
-var html = null;
-function init() {
-	if (window.DeviceMotionEvent) {
-		//console.log("DeviceMotionEvent supported");
-	} else if ('listenForDeviceMovement' in window) {
-		//console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
-	}
-}
+//download chrome installer standalone: https://www.google.com/intl/zh-CN/chrome/browser/thankyou.html?standalone=1&installdataindex=defaultbrowser
+//var INITED = false;
+var ori;
 
 var Orientation = function() {
+	var self = this;
 	this.initialOrientation = [0, 0, 0];
 	this.lastOrientationValue = [90, 90, 90];
 	this.positionValue = [0, 0, 0];
@@ -22,7 +17,14 @@ var Orientation = function() {
 		gamma: 90,
 		horizontal: false
 	};
-
+	window.addEventListener("deviceorientation", function(event) {
+		var alpha = event.alpha;
+		var beta = event.beta;
+		var gamma = event.gamma;
+		self.setOrientation(alpha, beta, gamma);
+	},
+	true);
+	
 	this.initOrientation = function() {
 		this.initialOrientation[0] = this.lastOrientationValue[0];
 		this.initialOrientation[1] = this.lastOrientationValue[1];
@@ -105,29 +107,16 @@ var Orientation = function() {
 	};
 };
 
-var ori = new Orientation();
-
-init2();
-
-function btnInitializeClick() {
+//start motion color picker
+var btnInitializeClick = function(){
 	ori.initOrientation();
-	if (!INITED) {
-		setTimeout(timeoutCallback, 100);
-	}
-	/**
-	 * 这2行是为了在点击之后才不显示
-	 */
-	document.getElementById('ball').style.display = 'none';
-	document.getElementById('tips').style.display = 'none';
-	html.style.background = 'none';
-	clearTimeout(checkHoTimer);
-}
-
-function timeoutCallback() {
-	INITED = true;
-	changeColor();
-	setTimeout(timeoutCallback, 100);
-}
+	
+	(function() {
+		var _recall = arguments.callee;
+		changeColor();
+		setTimeout(_recall, 100);
+	})();
+};
 
 /**
  * 计算角度
@@ -316,90 +305,117 @@ var changeColor = function(vx, vy) {
 	}
 }
 
-function init2() {
-	document.getElementById("btn").addEventListener("click", btnInitializeClick, true);
-
-	window.addEventListener("deviceorientation", function(event) {
-		var alpha = event.alpha;
-		var beta = event.beta;
-		var gamma = event.gamma;
-		ori.setOrientation(alpha, beta, gamma);
-	},
-	true);
-}
-function deviceMotionHandler3(eventData) {
-	var acceleration = eventData.accelerationIncludingGravity;
-	var rawAcceleration = "[" + Math.round(acceleration.x) + ", " + Math.round(acceleration.y) + ", " + Math.round(acceleration.z) + "]";
-	var facingUp = - 1;
-	if (acceleration.z > 0) {
-		facingUp = + 1;
-	}
-}
+//function deviceMotionHandler3(eventData) {
+//	var acceleration = eventData.accelerationIncludingGravity;
+//	var rawAcceleration = "[" + Math.round(acceleration.x) + ", " + Math.round(acceleration.y) + ", " + Math.round(acceleration.z) + "]";
+//	var facingUp = - 1;
+//	if (acceleration.z > 0) {
+//		facingUp = + 1;
+//	}
+//}
 
 /**
  * 检测是否在水平状态
  */
-var ball = document.getElementById("ball");
-var hoCount = 0;
-var checkHo = function() {
-	var data = ori.calculate();
-	var alpha = data.alpha;
-	var beta = data.beta;
-	if (window.orientation !== 0) {
-		alpha = data.beta;
-		beta = data.alpha;
-	}
+//TODO: make the ball move smoothly.
+var checkHo = (function(){
 
-	var horizontal = data.horizontal;
-	console.log(JSON.stringify(data));
-	if (horizontal) {
-		// 已经是水平
-		if (hoCount < 6) {
-			hoCount++;
-			setTimeout(checkHo, 100);
-		} else {
-			changeBall({
-				top: 45,
-				left: 45
-			});
-			window.checkHoTimer = setTimeout(checkHo, 100);
+	var checkHoTimer;
+	var ball = document.getElementById("ball");
+	var chrome = document.getElementById("btn");
+	var hoCount = 0;
+	
+	var _current_step = 0;
+	//different behavior every step
+	var changeStep = function(n){
+		if(n == _current_step) return;
 
-			setTimeout(function() {
-				html = document.documentElement;
-				document.getElementById("ball").style.display = 'none';
-				document.getElementById("btn").style.display = 'block';
-				document.getElementById("btn").style.background = 'url(images/chrome.png) no-repeat center center';
-				document.getElementById("tips").innerHTML = "Step 2: 点击chrome图标";
-			},
-			600);
+		if(n == 1){
+			//control the ball stay in center
+			document.getElementById("btn").style.display = 'none';
+			document.getElementById("ball").style.display = 'block';
+			document.getElementById("tips").innerHTML = "Step 1: 手机水平向前放置";
+		}else if(n == 2){
+			//click the chrome icon
+			document.getElementById("ball").style.display = 'none';
+			document.getElementById("btn").style.display = 'block';
+			document.getElementById("btn").style.background = 'url(images/chrome.png) no-repeat center center';
+			document.getElementById("tips").innerHTML = "Step 2: 点击chrome图标";
+		}else{
+			//disable chrome click
+			document.getElementById('ball').style.display = 'none';
+			document.getElementById('tips').style.display = 'none';
+			document.documentElement.style.background = 'none';
+			//stop checkHo
+			clearTimeout(checkHoTimer);
 		}
-	} else {
-		hoCount=0;
-		var px = alpha > 0 ? parseInt(45 - alpha / 90 * 45) : parseInt( - alpha / 90 * 45 + 45);
-		var py = beta > 0 ? parseInt(45 - beta / 90 * 45) : parseInt( - beta / 90 * 45 + 45);
-		changeBall({
-			top: px,
-			left: py
-		});
-		document.getElementById("btn").style.display = 'none';
-		document.getElementById("ball").style.display = 'block';
-		document.getElementById("tips").innerHTML = "Step 1: 手机水平向前放置";
-		setTimeout(checkHo, 100);
+	};
+	
+	/**
+	 * 改变小球位置
+	 */
+	var changeBall = function(pos) {
+		ball.style.left = pos.left + "%";
+		ball.style.top = pos.top + '%';
+		if (location.hash == "#debug") {
+			document.getElementById('ball').innerHTML = [pos.px, pos.py].join("");
+		}
+	};
+	
+	//when chrome icon clicked, start main function
+	chrome.addEventListener("click", function(){
+		changeStep(3);
+		btnInitializeClick();
+	}, true);
+	
+	//construct interface of check-
+	return function() {
+		var data = ori.calculate();
+		var alpha = data.alpha;
+		var beta = data.beta;
+		if (window.orientation !== 0) {
+			alpha = data.beta;
+			beta = data.alpha;
+		}
 
-	}
-};
+		var horizontal = data.horizontal;
+		console.log(JSON.stringify(data));
+		if (horizontal) {
+			// 已经是水平
+			if (hoCount < 6) {
+				hoCount++;
+			} else {
+				changeBall({
+					top: 45,
+					left: 45
+				});
 
-/**
- * 改变小球位置
- */
-var changeBall = function(pos) {
-	ball.style.left = pos.left + "%";
-	ball.style.top = pos.top + '%';
-	if (location.hash == "#debug") {
-		document.getElementById('ball').innerHTML = [pos.px, pos.py].join("");
-	}
-};
+				changeStep(2);
+			}
+		} else {
+			hoCount=0;
+			changeStep(1);
+			var px = alpha > 0 ? parseInt(45 - alpha / 90 * 45) : parseInt( - alpha / 90 * 45 + 45);
+			var py = beta > 0 ? parseInt(45 - beta / 90 * 45) : parseInt( - beta / 90 * 45 + 45);
+			changeBall({
+				top: px,
+				left: py
+			});
+		}
+		
+		checkHoTimer = setTimeout(arguments.callee, 100);
+	};
+})();
+
+//program entry
 window.onload = function() {
+	ori = new Orientation();
+
+	if (window.DeviceMotionEvent) {
+		//console.log("DeviceMotionEvent supported");
+	} else if ('listenForDeviceMovement' in window) {
+		//console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
+	}
 	checkHo();
-}
+};
 
