@@ -1,13 +1,16 @@
 //download chrome installer standalone: https://www.google.com/intl/zh-CN/chrome/browser/thankyou.html?standalone=1&installdataindex=defaultbrowser
 //var INITED = false;
 var ori;
+var DEBUG = location.hash == "#debug";
+var tag = document.createElement('div');
+document.body.appendChild(tag);
 
 var Orientation = function() {
 	var self = this;
 	this.initialOrientation = [0, 0, 0];
 	this.lastOrientationValue = [90, 90, 90];
 	this.positionValue = [0, 0, 0];
-	this.lowFilterAlpha = 0.8;
+	this.lowFilterAlpha = 0; //.8;  //这个数值控制颜色渐变速度
 	this._data = {
 		x: 100,
 		y: 100,
@@ -22,6 +25,16 @@ var Orientation = function() {
 		var beta = event.beta;
 		var gamma = event.gamma;
 		self.setOrientation(alpha, beta, gamma);
+		if(DEBUG){
+			tag.innerHTML = [parseInt(alpha), parseInt(beta), parseInt(gamma)].join();
+		}
+		//chrome 数值解释
+		//iPad:
+		//alpha around Z : 0 ~ 360
+		//beta around X : -90 ~ 0 ~ 90 positive means top up 
+		//gamma around Y : -180 ~ 180 positive means left up
+		//Android Browser & Chrome
+		//gamma around Y : -90 ~ 270 left down to -90 right to 270
 	},
 	true);
 	
@@ -31,31 +44,36 @@ var Orientation = function() {
 		this.initialOrientation[2] = this.lastOrientationValue[2];
 		return this;
 	};
-
+	
+	//just hold values for calculate use. no process.
 	this.setOrientation = function(alpha, beta, gamma) {
-		if (alpha > 180) {
-			alpha = - 360 + alpha;
-		}
-		if (gamma > 180) {
-			gamma = - 360 + gamma;
-		}
-		this.lastOrientationValue[0] = alpha * Math.PI / 180;
-		this.lastOrientationValue[1] = beta * Math.PI / 180;
-		this.lastOrientationValue[2] = gamma * Math.PI / 180;
+		this.lastOrientationValue[0] = alpha;
+		this.lastOrientationValue[1] = beta;
+		this.lastOrientationValue[2] = gamma;
 		return this;
 	};
 
+	//this method assume deviceorientation gives value in 0 - 360 degree
 	this.calculate = function() {
 		var angleX = this.lastOrientationValue[1];
 		var angleY = this.lastOrientationValue[2];
 		var angleZ = this.lastOrientationValue[0] - this.initialOrientation[0];
-		if (Math.abs(angleZ) > Math.PI) {
+		//统一取值范围
+		if (Math.abs(angleZ) > 180) {
 			if (this.lastOrientationValue[0] > 0) {
-				angleZ -= 2 * Math.PI;
+				angleZ -= 360;
 			} else {
-				angleZ += 2 * Math.PI;
+				angleZ += 360;
 			}
 		}
+		if (angleY > 180) {
+			angleY -= 360;
+		}
+		//transform to radian
+		angleX = angleX * Math.PI / 180;
+		angleY = angleY * Math.PI / 180;
+		angleZ = angleZ * Math.PI / 180;
+		
 
 		var x = 0.0;
 		var y = 100.0;
@@ -95,6 +113,12 @@ var Orientation = function() {
 		this._data.x = ex;
 		this._data.y = ey;
 		this._data.z = ez;
+		
+		//
+		if(DEBUG){
+			tag.innerHTML = tag.innerHTML + ' || ' +[ex,ey,ez].join();
+		}
+		
 		this._data.alpha = angleX * 180 / Math.PI;
 		this._data.beta = angleY * 180 / Math.PI;
 		this._data.gamma = angleZ * 180 / Math.PI;
@@ -107,14 +131,26 @@ var Orientation = function() {
 	};
 };
 
+
 //start motion color picker
 var btnInitializeClick = function(){
 	ori.initOrientation();
+	//_pn = 0;
+	//_pt = new Date();
 	
 	(function() {
 		var _recall = arguments.callee;
 		changeColor();
-		setTimeout(_recall, 100);
+		setTimeout(_recall, 50);
+		
+		//测试帧数
+		//_pn++;
+		//if((new Date() - _pt) >= 1000){
+		//	document.title = _pn;
+		//	_pn = 0;
+		//	_pt = new Date();
+		//	
+		//}
 	})();
 };
 
@@ -265,7 +301,6 @@ var changeColor = function(vx, vy) {
 	var angle = getAngle(x, y).angle;
 	var color = getColor(angle);
 	var power = parseInt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-	var body = document.body;
 
 	/**
 	 * 下面是颜色也表示亮度
@@ -293,6 +328,7 @@ var changeColor = function(vx, vy) {
 	/**
 	 * 颜色的调节 
 	 */
+	var body = document.body;
 	body.style.background = color;
 	/**
 	 * 亮度调节
@@ -300,7 +336,7 @@ var changeColor = function(vx, vy) {
 	var opacity = (power / 100).toFixed(2); // 这样直接取值效果非常不好
 	body.style.opacity = opacity;
 	/**/
-	if (location.hash == "#debug") {
+	if (DEBUG) {
 		document.getElementById('btn').innerHTML = ["<h1>", power, "</h1>", "<h1>", x.toString(), ":", y.toString(), "</h1><h1>", angle, ":", color, "</h1>"].join("");
 	}
 }
@@ -322,7 +358,7 @@ var checkHo = (function(){
 
 	var checkHoTimer;
 	var ball = document.getElementById("ball");
-	var chrome = document.getElementById("btn");
+	var btn = document.getElementById("btn");
 	var hoCount = 0;
 	
 	var _current_step = 0;
@@ -332,23 +368,24 @@ var checkHo = (function(){
 
 		if(n == 1){
 			//control the ball stay in center
-			document.getElementById("btn").style.display = 'none';
-			document.getElementById("ball").style.display = 'block';
+			btn.style.display = 'none';
+			ball.style.display = 'block';
 			document.getElementById("tips").innerHTML = "Step 1: 手机水平向前放置";
 		}else if(n == 2){
 			//click the chrome icon
-			document.getElementById("ball").style.display = 'none';
-			document.getElementById("btn").style.display = 'block';
-			document.getElementById("btn").style.background = 'url(images/chrome.png) no-repeat center center';
+			ball.style.display = 'none';
+			btn.style.display = 'block';
+			btn.style.background = 'url(images/chrome.png) no-repeat center center';
 			document.getElementById("tips").innerHTML = "Step 2: 点击chrome图标";
 		}else{
 			//disable chrome click
-			document.getElementById('ball').style.display = 'none';
+			ball.style.display = 'none';
 			document.getElementById('tips').style.display = 'none';
 			document.documentElement.style.background = 'none';
 			//stop checkHo
 			clearTimeout(checkHoTimer);
 		}
+		_current_step = n;
 	};
 	
 	/**
@@ -363,7 +400,7 @@ var checkHo = (function(){
 	};
 	
 	//when chrome icon clicked, start main function
-	chrome.addEventListener("click", function(){
+	btn.addEventListener("click", function(){
 		changeStep(3);
 		btnInitializeClick();
 	}, true);
@@ -403,7 +440,25 @@ var checkHo = (function(){
 			});
 		}
 		
-		checkHoTimer = setTimeout(arguments.callee, 100);
+		checkHoTimer = setTimeout(arguments.callee, 50);
+		//changeStep(3);
+		//(function(){
+		//	var _recall = arguments.callee;
+		//	var t = new Date();
+		//	var i = 100;
+		//	
+		//	function loop(){
+		//		i -= 5;
+		//		changeColor(i, 100);
+		//		if(i <= 100) {
+		//			setTimeout(_recall, 3000);
+		//		}else{
+		//			setTimeout(loop, 50);
+		//		}
+		//	}
+		//	setTimeout(loop, 50);
+		//})();
+		
 	};
 })();
 
