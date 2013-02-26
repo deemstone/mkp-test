@@ -471,6 +471,19 @@ window.onload = function() {
 	} else if ('listenForDeviceMovement' in window) {
 		//console.log("DeviceMotionEvent supported [listenForDeviceMovement]");
 	}
-	checkHo();
-};
+	var c = document.location.search.match(/^\?c=(\d)/);
+	//判断url是否带参数，并取出参数
+	if( c && c[1] ){
+		c = c[1];
+		var socket = io.connect();
+		socket.on('color', function (data) {
+			console.log(data);
+			document.body.style.backgroundColor = data[c-1];
+			//socket.emit('my other event', { my: 'data' });
+		});
+	}else{
+		//没有参数默认摇摆模式
+		checkHo();
+	}
+}
 

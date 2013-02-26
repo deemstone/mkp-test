@@ -1,0 +1,44 @@
+{
+  "name": "BigLED",
+  "description": "手机Chrome巨大LED方阵",
+  "keywords": [
+	"magic chrome",
+	"js motion api",
+	"websocket"
+  ],
+  "version": "0.1.0",
+  "homepage": "http://github.com/deemstone/mkp-test",
+  "author": "Deemstone Li <deemstone@gmail.com> (http://blog.cooer.net)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deemstone/mkp-test"
+  },
+  "bugs": {
+    "email": "deemstone@gmail.com",
+    "url": "http://github.com/deemstone/mk-test/issues"
+  },
+  "directories": {
+    "doc": "./doc"
+  },
+  "main": "./server.js",
+  "bin": "./server.js",
+  "dependencies": {
+	"connect": "2.4.4",
+	//"router": "0.6.0",
+	//"connect-redis": "1.4.1",
+	//"ejs": "0.8.2",
+	"socket.io": "0.9.10",
+	//"redis": "0.7.2"
+  },
+  "bundleDependencies": [
+  ],
+  "devDependencies": {
+  },
+  "engines": {
+    "node": "0.6 || 0.7 || 0.8",
+    "npm": "1"
+  },
+  "scripts": {
+    "test": "node ./test/run.js"
+  }
+}
