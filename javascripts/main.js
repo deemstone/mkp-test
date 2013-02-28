@@ -370,7 +370,9 @@ var checkHo = (function(){
 			//control the ball stay in center
 			btn.style.display = 'none';
 			ball.style.display = 'block';
+			document.getElementById('tips').style.display = 'block';
 			document.getElementById("tips").innerHTML = "Step 1: 手机水平向前放置";
+			document.documentElement.style.background = '';
 		}else if(n == 2){
 			//click the chrome icon
 			ball.style.display = 'none';
@@ -380,6 +382,8 @@ var checkHo = (function(){
 		}else{
 			//disable chrome click
 			ball.style.display = 'none';
+			btn.style.background = 'url(images/chrome.png) no-repeat center center';
+			btn.style.display = 'block';
 			document.getElementById('tips').style.display = 'none';
 			document.documentElement.style.background = 'none';
 			//stop checkHo
@@ -401,6 +405,7 @@ var checkHo = (function(){
 	
 	//when chrome icon clicked, start main function
 	btn.addEventListener("click", function(){
+		if(_current_step != 2) return;  //其他状态下不接受点击
 		changeStep(3);
 		btnInitializeClick();
 	}, true);
@@ -463,7 +468,7 @@ var checkHo = (function(){
 })();
 
 //program entry
-window.onload = function() {
+//window.onload = function() {
 	ori = new Orientation();
 
 	if (window.DeviceMotionEvent) {
@@ -475,11 +480,10 @@ window.onload = function() {
 	//判断url是否带参数，并取出参数
 	if( c && c[1] ){
 		c = c[1];
-		changeStep(2);
 		changeStep(3);
 		var socket = io.connect();
 		socket.on('color', function (data) {
-			console.log(data);
+			//console.log(data);
 			document.body.style.backgroundColor = data[c-1];
 			//socket.emit('my other event', { my: 'data' });
 		});
@@ -487,5 +491,5 @@ window.onload = function() {
 		//没有参数默认摇摆模式
 		checkHo();
 	}
-}
+//}
 
