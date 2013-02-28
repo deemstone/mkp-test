@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>GOOGLE</title>
+		 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+		<style type="text/css">
+			#chrome{
+				width: 90px;
+				margin: 45px auto;
+			}
+			#chrome img{
+				width: 100%
+			}
+			#container{
+				max-width: 750px;
+				margin: auto;
+			}
+			.channel{
+				width: 33%;
+				float: left;
+				position: relative;
+				text-align: center;
+			}
+			.color{
+				width: 80%;
+				height: 160px;
+				margin: auto;
+				box-shadow: 0 0 8px;
+			}
+			.channel img{
+				width: 40%;
+				margin: 20px;
+			}
+		</style>
+	</head>
+	<!-- 弹性布局 -->
+	<body>
+		<h1 id="chrome"><img src="images/chrome.png"></img></h1>
+		
+		<div id="container">
+			<div class="channel">
+				<div class="color"></div>
+				<img src="images/qr1.png"></img>
+			</div>
+			<div class="channel">
+				<div class="color"></div>
+				<img src="images/qr2.png"></img>
+			</div>
+			<div class="channel">
+				<div class="color"></div>
+				<img src="images/qr3.png"></img>
+			</div>
+		</div>
+		<script type="text/javascript" src="socket.io/socket.io.js" charset="utf-8"></script>
+		<script type="text/javascript">
+		//	window.onload = function(){
+				var url = 'http://'+ window.location.host +'/?c=';
+				var channels = document.querySelectorAll('.channel');
+				var i,el;
+				for(i = 1; i<=channels.length; i++){
+					el = channels[i-1];
+					var a = document.createElement('a');
+					a.href = url + i;
+					a.innerHTML = url + i;
+					el.appendChild( a );
+				}
+				var socket = io.connect();
+				socket.on('color', function (data) {
+					console.log(data);
+					var colors = document.querySelectorAll('div.color');
+					colors[0].style.background = data[0];
+					colors[1].style.background = data[1];
+					colors[2].style.background = data[2];
+					//document.body.style.backgroundColor = data[c-1];
+					//socket.emit('my other event', { my: 'data' });
+				});
+		//	};
+		</script>
+	</body>
+</html>

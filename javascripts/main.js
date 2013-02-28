@@ -363,7 +363,7 @@ var checkHo = (function(){
 	
 	var _current_step = 0;
 	//different behavior every step
-	var changeStep = function(n){
+	var changeStep = window.changeStep = function(n){
 		if(n == _current_step) return;
 
 		if(n == 1){
@@ -475,6 +475,8 @@ window.onload = function() {
 	//判断url是否带参数，并取出参数
 	if( c && c[1] ){
 		c = c[1];
+		changeStep(2);
+		changeStep(3);
 		var socket = io.connect();
 		socket.on('color', function (data) {
 			console.log(data);
