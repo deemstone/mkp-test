@@ -23,12 +23,8 @@
   "main": "./server.js",
   "bin": "./server.js",
   "dependencies": {
-	"connect": "2.4.4",
-	//"router": "0.6.0",
-	//"connect-redis": "1.4.1",
-	//"ejs": "0.8.2",
-	"socket.io": "0.9.10",
-	//"redis": "0.7.2"
+	"connect": "~2.4.4",
+	"socket.io": "~0.9.10"
   },
   "bundleDependencies": [
   ],
